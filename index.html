@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mirror's Tic-Tac-Toe | Premium Edition</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #7c3aed;
+            --accent-color: #10b981;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(15, 23, 42, 0.9);
+            --glass-effect: rgba(255, 255, 255, 0.05);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-title {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-effect);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .game-cell {
+            aspect-ratio: 1;
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-cell:hover:not(.occupied) {
+            background: rgba(51, 65, 85, 0.6);
+            border-color: rgba(79, 70, 229, 0.5);
+            transform: scale(1.02);
+        }
+        
+        .game-cell.x-mark {
+            color: #f87171;
+        }
+        
+        .game-cell.o-mark {
+            color: #60a5fa;
+        }
+        
+        .winning-cell {
+            animation: pulse-win 2s infinite;
+            background: linear-gradient(45deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1)) !important;
+        }
+        
+        @keyframes pulse-win {
+            0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+        }
+        
+        .cell-content {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .gradient-border {
+            position: relative;
+            border: double 2px transparent;
+            background-image: linear-gradient(var(--card-bg), var(--card-bg)), 
+                              linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+        
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+        }
+        
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .online { background-color: #10b981; }
+        .offline { background-color: #ef4444; }
+        .waiting { background-color: #f59e0b; }
+        
+        .player-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .player-card:hover {
+            transform: translateX(4px);
+            border-left-color: var(--primary-color);
+        }
+        
+        .winner-glow {
+            animation: winnerGlow 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes winnerGlow {
+            from { filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5)); }
+            to { filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8)); }
+        }
+        
+        .game-id-badge {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="text-gray-100">
+    <!-- Floating Background Elements -->
+    <div class="floating-bg"></div>
+    
+    <!-- Audio Elements -->
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-chill-hop-164.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="tap-sound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-water-drop-echo-1097.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win-sound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="draw-sound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div id="app-container" class="w-full max-w-md mx-auto">
+            <!-- Welcome Screen -->
+            <div id="welcome-view" class="glass-card rounded-2xl p-8 slide-in">
+                <div class="text-center mb-8">
+                    <h1 class="game-title text-4xl font-bold mb-2">Mirror's Tic-Tac-Toe</h1>
+                    <p class="text-gray-400">Premium Online Edition</p>
+                </div>
+                
+                <div id="welcome-content" class="space-y-6">
+                    <div class="text-center">
+                        <p class="text-gray-300 mb-6">Welcome to the ultimate Tic-Tac-Toe experience! Play locally, challenge AI, or battle friends online in real-time.</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <button id="quick-play-btn" 
+                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                            <span>⚡</span>
+                            <span>Quick Play (Guest)</span>
+                        </button>
+                        
+                        <button id="create-account-btn" 
+                                class="btn-secondary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                            <span>👤</span>
+                            <span>Create Account</span>
+                        </button>
+                    </div>
+                    
+                    <div class="text-center text-gray-500 text-sm pt-4 border-t border-gray-800">
+                        <p>No registration needed for guest play. Create an account to save your stats!</p>
+                    </div>
+                </div>
+                
+                <!-- Account Creation Form (Initially Hidden) -->
+                <div id="account-form" class="space-y-6 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Display Name</label>
+                        <input type="text" id="display-name" 
+                               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                               placeholder="Enter your name">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                        <input type="text" id="username" 
+                               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                               placeholder="Choose a unique username">
+                        <p class="text-xs text-gray-500 mt-1">This will be your game identity</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Username</label>
+                        <input type="text" id="confirm-username" 
+                               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                               placeholder="Re-enter your username">
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <button id="register-btn" 
+                                class="btn-primary w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center">
+                            <span id="auth-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span>
+                            Create Account & Play
+                        </button>
+                        
+                        <button id="back-to-welcome" 
+                                class="btn-secondary w-full py-3 rounded-xl font-semibold text-white">
+                            ← Back to Welcome
+                        </button>
+                    </div>
+                    
+                    <div id="auth-error" class="hidden p-3 bg-red-900/30 border border-red-700/50 rounded-xl text-red-300 text-sm"></div>
+                </div>
+            </div>
+            
+            <!-- Game View (Initially Hidden) -->
+            <div id="game-view" class="hidden">
+                <!-- Header -->
+                <div class="glass-card rounded-2xl p-6 mb-6 slide-in">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h1 class="game-title text-2xl font-bold">Mirror's Tic-Tac-Toe</h1>
+                            <div id="user-info" class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span id="current-username" class="text-indigo-300 font-medium mr-2"></span>
+                                <span id="online-status" class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full flex items-center">
+                                    <span class="status-dot online mr-1"></span>
+                                    <span>Online</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="profile-btn" class="btn-secondary px-3 py-2 rounded-xl text-sm">
+                                👤 Profile
+                            </button>
+                            <button id="logout-btn" class="btn-secondary px-3 py-2 rounded-xl text-sm">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Scoreboard -->
+                    <div id="scoreboard" class="gradient-border rounded-xl p-4">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-red-400" id="score-x">0</div>
+                                <div class="text-xs text-gray-400">Player X</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-300" id="score-draws">0</div>
+                                <div class="text-xs text-gray-400">Draws</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-blue-400" id="score-o">0</div>
+                                <div class="text-xs text-gray-400">Player O</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Game Mode Selection -->
+                <div id="mode-selection" class="glass-card rounded-2xl p-6 mb-6 slide-in">
+                    <h2 class="text-xl font-semibold text-white mb-4 text-center">Select Game Mode</h2>
+                    <div class="space-y-4">
+                        <button onclick="setGameMode('local')" 
+                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                            <span>👥</span>
+                            <span>Local Duel (2 Players)</span>
+                        </button>
+                        
+                        <button onclick="setGameMode('ai')" 
+                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                            <span>🤖</span>
+                            <span>AI Challenge</span>
+                        </button>
+                        
+                        <button onclick="showOnlineMode()" 
+                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                            <span>🌐</span>
+                            <span>Online Battle</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Online Controls -->
+                <div id="online-controls" class="glass-card rounded-2xl p-6 mb-6 hidden slide-in">
+                    <h2 class="text-xl font-semibold text-white mb-4 text-center">Online Battle</h2>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-400 mb-1">Your Game ID</div>
+                            <div id="game-id-display" class="game-id-badge text-lg text-indigo-300 bg-gray-900/50 p-3 rounded-xl break-all"></div>
+                            <button onclick="copyGameId()" class="text-xs text-gray-400 hover:text-white mt-2 transition">
+                                📋 Copy to share
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Join Existing Game</label>
+                            <input type="text" id="join-game-input" 
+                                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                                   placeholder="Enter friend's Game ID">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="createOnlineGame()" 
+                                class="btn-primary py-3 rounded-xl font-semibold text-white">
+                            Create Game
+                        </button>
+                        
+                        <button onclick="joinOnlineGame()" 
+                                class="btn-secondary py-3 rounded-xl font-semibold text-white">
+                            Join Game
+                        </button>
+                    </div>
+                    
+                    <button onclick="backToModes()" 
+                            class="w-full mt-4 py-2 text-gray-400 hover:text-white text-sm transition">
+                        ← Back to modes
+                    </button>
+                </div>
+                
+                <!-- Game Board -->
+                <div id="game-board-container" class="glass-card rounded-2xl p-6 hidden slide-in">
+                    <div id="game-status" class="text-center mb-6 p-4 bg-gray-900/50 rounded-xl">
+                        <div id="status-message" class="text-xl font-semibold"></div>
+                        <div id="turn-indicator" class="text-sm text-gray-400 mt-2 flex items-center justify-center">
+                            <span class="status-dot waiting mr-2"></span>
+                            <span>Waiting...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Game Board Grid -->
+                    <div id="board-grid" class="grid grid-cols-3 gap-3 mb-6">
+                        <!-- Cells will be generated by JavaScript -->
+                    </div>
+                    
+                    <!-- Game Controls -->
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <button id="restart-game" 
+                                    class="btn-secondary py-3 rounded-xl font-semibold text-white">
+                                Restart Game
+                            </button>
+                            
+                            <button id="change-mode" 
+                                    class="btn-primary py-3 rounded-xl font-semibold text-white">
+                                Change Mode
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <button id="audio-toggle" 
+                                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm font-medium transition flex items-center space-x-2">
+                                <span>🎵</span>
+                                <span>Music: On</span>
+                            </button>
+                            
+                            <button id="sound-toggle" 
+                                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm font-medium transition flex items-center space-x-2">
+                                <span>🔊</span>
+                                <span>Sounds: On</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Online Players Info -->
+                    <div id="online-game-info" class="mt-6 pt-6 border-t border-gray-800 hidden">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-3 bg-gray-900/50 rounded-xl">
+                                <div class="text-sm text-gray-400">You</div>
+                                <div id="player-you" class="font-semibold text-indigo-300"></div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-900/50 rounded-xl">
+                                <div class="text-sm text-gray-400">Opponent</div>
+                                <div id="player-opponent" class="font-semibold text-purple-300"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden p-4">
+        <div class="glass-card rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Player Profile</h3>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mx-auto flex items-center justify-center text-2xl font-bold mb-3">
+                        <span id="profile-avatar">👤</span>
+                    </div>
+                    <h4 id="profile-name" class="text-xl font-bold text-white"></h4>
+                    <p id="profile-username" class="text-gray-400"></p>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="p-3 bg-gray-900/50 rounded-xl">
+                        <div class="text-2xl font-bold text-green-400" id="profile-wins">0</div>
+                        <div class="text-xs text-gray-400">Wins</div>
+                    </div>
+                    <div class="p-3 bg-gray-900/50 rounded-xl">
+                        <div class="text-2xl font-bold text-red-400" id="profile-losses">0</div>
+                        <div class="text-xs text-gray-400">Losses</div>
+                    </div>
+                    <div class="p-3 bg-gray-900/50 rounded-xl">
+                        <div class="text-2xl font-bold text-blue-400" id="profile-draws">0</div>
+                        <div class="text-xs text-gray-400">Draws</div>
+                    </div>
+                </div>
+                
+                <div class="pt-4 border-t border-gray-800">
+                    <button onclick="closeProfileModal()" 
+                            class="btn-primary w-full py-3 rounded-xl font-semibold">
+                        Close Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously,
+            signOut,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            updateDoc, 
+            onSnapshot,
+            collection,
+            query,
+            where,
+            getDocs,
+            serverTimestamp,
+            increment
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMHVz6dXs7vuq10OcoYSx0X1xcYXiIWAc",
+            authDomain: "mirror-toe.firebaseapp.com",
+            projectId: "mirror-toe",
+            storageBucket: "mirror-toe.firebasestorage.app",
+            messagingSenderId: "845039024700",
+            appId: "1:845039024700:web:fa301a97e56d71bff6a139"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // DOM Elements
+        const welcomeView = document.getElementById('welcome-view');
+        const gameView = document.getElementById('game-view');
+        const gameBoardContainer = document.getElementById('game-board-container');
+        const modeSelection = document.getElementById('mode-selection');
+        const onlineControls = document.getElementById('online-controls');
+        const boardGrid = document.getElementById('board-grid');
+        const accountForm = document.getElementById('account-form');
+        const welcomeContent = document.getElementById('welcome-content');
+        const profileModal = document.getElementById('profile-modal');
+        
+        // Audio Elements
+        const bgMusic = document.getElementById('bg-music');
+        const tapSound = document.getElementById('tap-sound');
+        const winSound = document.getElementById('win-sound');
+        const drawSound = document.getElementById('draw-sound');
+        
+        // Game State
+        let gameState = {
+            board: Array(9).fill(''),
+            currentPlayer: 'X',
+            gameActive: false,
+            gameMode: null,
+            gameId: null,
+            mySymbol: 'X',
+            isPlayerTurn: false,
+            scores: { X: 0, O: 0, draws: 0 },
+            audioEnabled: true,
+            soundsEnabled: true,
+            currentUser: null,
+            userProfile: null,
+            unsubscribeGame: null,
+            isGuest: true,
+            playerStats: { wins: 0, losses: 0, draws: 0 }
+        };
+        
+        // Initialize Game
+        function initGame() {
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initialize audio
+            initializeAudio();
+            
+            // Check authentication state
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    // User is signed in anonymously
+                    gameState.currentUser = user;
+                    
+                    // Check if user has a profile
+                    try {
+                        const userDoc = await getDoc(doc(db, 'users', user.uid));
+                        if (userDoc.exists()) {
+                            gameState.userProfile = userDoc.data();
+                            gameState.isGuest = gameState.userProfile.isGuest || false;
+                            gameState.playerStats = {
+                                wins: gameState.userProfile.wins || 0,
+                                losses: gameState.userProfile.losses || 0,
+                                draws: gameState.userProfile.draws || 0
+                            };
+                            
+                            if (!gameState.isGuest) {
+                                document.getElementById('current-username').textContent = 
+                                    `@${gameState.userProfile.username}`;
+                            } else {
+                                document.getElementById('current-username').textContent = 
+                                    `Guest_${user.uid.slice(0, 6)}`;
+                            }
+                            
+                            showGameView();
+                        } else {
+                            // New user - show welcome screen
+                            showWelcomeView();
+                        }
+                    } catch (error) {
+                        console.log("Error loading user profile:", error);
+                        showWelcomeView();
+                    }
+                } else {
+                    // No user - show welcome screen
+                    showWelcomeView();
+                }
+            });
+        }
+        
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Welcome screen buttons
+            document.getElementById('quick-play-btn').addEventListener('click', quickPlay);
+            document.getElementById('create-account-btn').addEventListener('click', showAccountForm);
+            document.getElementById('back-to-welcome').addEventListener('click', showWelcomeContent);
+            document.getElementById('register-btn').addEventListener('click', registerAccount);
+            
+            // Game controls
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            document.getElementById('profile-btn').addEventListener('click', showProfileModal);
+            document.getElementById('restart-game').addEventListener('click', restartGame);
+            document.getElementById('change-mode').addEventListener('click', backToModes);
+            document.getElementById('audio-toggle').addEventListener('click', toggleAudio);
+            document.getElementById('sound-toggle').addEventListener('click', toggleSounds);
+        }
+        
+        // Initialize Audio
+        function initializeAudio() {
+            // Set volumes
+            bgMusic.volume = 0.3;
+            tapSound.volume = 0.5;
+            winSound.volume = 0.6;
+            drawSound.volume = 0.6;
+            
+            // Try to play background music
+            bgMusic.play().catch(e => {
+                console.log("Autoplay blocked. User interaction required.");
+            });
+        }
+        
+        // User Management
+        async function quickPlay() {
+            try {
+                const userCredential = await signInAnonymously(auth);
+                const user = userCredential.user;
+                
+                // Create guest profile
+                await setDoc(doc(db, 'users', user.uid), {
+                    displayName: 'Guest Player',
+                    username: `guest_${user.uid.slice(0, 8)}`,
+                    isGuest: true,
+                    createdAt: serverTimestamp(),
+                    lastSeen: serverTimestamp(),
+                    wins: 0,
+                    losses: 0,
+                    draws: 0
+                });
+                
+                gameState.userProfile = {
+                    displayName: 'Guest Player',
+                    username: `guest_${user.uid.slice(0, 8)}`,
+                    isGuest: true
+                };
+                
+                gameState.isGuest = true;
+                gameState.playerStats = { wins: 0, losses: 0, draws: 0 };
+                
+                document.getElementById('current-username').textContent = 
+                    `Guest_${user.uid.slice(0, 6)}`;
+                
+                showGameView();
+                
+            } catch (error) {
+                console.error('Quick play error:', error);
+                showMessage('Could not start quick play. Please try again.', 'error');
+            }
+        }
+        
+        function showAccountForm() {
+            welcomeContent.classList.add('hidden');
+            accountForm.classList.remove('hidden');
+        }
+        
+        function showWelcomeContent() {
+            accountForm.classList.add('hidden');
+            welcomeContent.classList.remove('hidden');
+        }
+        
+        async function registerAccount() {
+            const displayName = document.getElementById('display-name').value.trim();
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const confirmUsername = document.getElementById('confirm-username').value.trim().toLowerCase();
+            const errorDiv = document.getElementById('auth-error');
+            const authSpinner = document.getElementById('auth-spinner');
+            
+            errorDiv.classList.add('hidden');
+            authSpinner.classList.remove('hidden');
+            
+            // Validation
+            if (!displayName || !username || !confirmUsername) {
+                showError('Please fill in all fields');
+                authSpinner.classList.add('hidden');
+                return;
+            }
+            
+            if (username !== confirmUsername) {
+                showError('Usernames do not match');
+                authSpinner.classList.add('hidden');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showError('Username must be at least 3 characters');
+                authSpinner.classList.add('hidden');
+                return;
+            }
+            
+            // Check if username is already taken
+            try {
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('username', '==', username));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    showError('Username already taken');
+                    authSpinner.classList.add('hidden');
+                    return;
+                }
+                
+                // Sign in anonymously first
+                const userCredential = await signInAnonymously(auth);
+                const user = userCredential.user;
+                
+                // Create user profile
+                await setDoc(doc(db, 'users', user.uid), {
+                    displayName: displayName,
+                    username: username,
+                    isGuest: false,
+                    createdAt: serverTimestamp(),
+                    lastSeen: serverTimestamp(),
+                    wins: 0,
+                    losses: 0,
+                    draws: 0
+                });
+                
+                gameState.userProfile = {
+                    displayName: displayName,
+                    username: username,
+                    isGuest: false
+                };
+                
+                gameState.isGuest = false;
+                gameState.playerStats = { wins: 0, losses: 0, draws: 0 };
+                
+                document.getElementById('current-username').textContent = `@${username}`;
+                authSpinner.classList.add('hidden');
+                
+                showGameView();
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError('Registration failed: ' + error.message);
+                authSpinner.classList.add('hidden');
+            }
+        }
+        
+        async function logout() {
+            try {
+                if (gameState.unsubscribeGame) {
+                    gameState.unsubscribeGame();
+                    gameState.unsubscribeGame = null;
+                }
+                await signOut(auth);
+                gameState.currentUser = null;
+                gameState.userProfile = null;
+                showWelcomeView();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+        // View Management
+        function showWelcomeView() {
+            welcomeView.classList.remove('hidden');
+            gameView.classList.add('hidden');
+            welcomeContent.classList.remove('hidden');
+            accountForm.classList.add('hidden');
+            profileModal.classList.add('hidden');
+        }
+        
+        function showGameView() {
+            welcomeView.classList.add('hidden');
+            gameView.classList.remove('hidden');
+            modeSelection.classList.remove('hidden');
+            gameBoardContainer.classList.add('hidden');
+            onlineControls.classList.add('hidden');
+            profileModal.classList.add('hidden');
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('auth-error');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+        
+        function showMessage(message, type = 'info') {
+            const colors = {
+                info: 'text-blue-400',
+                success: 'text-green-400',
+                error: 'text-red-400',
+                warning: 'text-yellow-400'
+            };
+            
+            const statusElement = document.getElementById('status-message');
+            if (statusElement) {
+                statusElement.innerHTML = `<span class="${colors[type]}">${message}</span>`;
+            }
+        }
+        
+        // Profile Modal
+        function showProfileModal() {
+            if (!gameState.userProfile) return;
+            
+            document.getElementById('profile-name').textContent = gameState.userProfile.displayName;
+            document.getElementById('profile-username').textContent = `@${gameState.userProfile.username}`;
+            document.getElementById('profile-wins').textContent = gameState.playerStats.wins;
+            document.getElementById('profile-losses').textContent = gameState.playerStats.losses;
+            document.getElementById('profile-draws').textContent = gameState.playerStats.draws;
+            
+            profileModal.classList.remove('hidden');
+        }
+        
+        function closeProfileModal() {
+            profileModal.classList.add('hidden');
+        }
+        
+        // Game Mode Management
+        function setGameMode(mode) {
+            gameState.gameMode = mode;
+            gameState.gameId = null;
+            
+            modeSelection.classList.add('hidden');
+            gameBoardContainer.classList.remove('hidden');
+            document.getElementById('online-game-info').classList.add('hidden');
+            
+            startNewGame();
+        }
+        
+        function showOnlineMode() {
+            modeSelection.classList.add('hidden');
+            onlineControls.classList.remove('hidden');
+            
+            // Generate game ID
+            const gameId = 'TTT-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            document.getElementById('game-id-display').textContent = gameId;
+            gameState.gameId = gameId;
+        }
+        
+        function backToModes() {
+            // Unsubscribe from game updates
+            if (gameState.unsubscribeGame) {
+                gameState.unsubscribeGame();
+                gameState.unsubscribeGame = null;
+            }
+            
+            gameBoardContainer.classList.add('hidden');
+            onlineControls.classList.add('hidden');
+            modeSelection.classList.remove('hidden');
+            gameState.gameMode = null;
+            gameState.gameId = null;
+        }
+        
+        // Online Game Management
+        async function createOnlineGame() {
+            if (!gameState.currentUser) {
+                showMessage('Please login first', 'error');
+                return;
+            }
+            
+            const gameId = gameState.gameId || 'TTT-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            try {
+                const playerName = gameState.userProfile?.displayName || 'Anonymous';
+                const playerUsername = gameState.userProfile?.username || `guest_${gameState.currentUser.uid.slice(0, 6)}`;
+                
+                const gameData = {
+                    playerX: {
+                        uid: gameState.currentUser.uid,
+                        name: playerName,
+                        username: playerUsername
+                    },
+                    playerO: null,
+                    board: Array(9).fill(''),
+                    currentPlayer: 'X',
+                    gameActive: true,
+                    status: 'waiting',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
+                
+                await setDoc(doc(db, 'games', gameId), gameData);
+                
+                gameState.gameMode = 'online';
+                gameState.mySymbol = 'X';
+                gameState.isPlayerTurn = true;
+                gameState.gameId = gameId;
+                
+                onlineControls.classList.add('hidden');
+                gameBoardContainer.classList.remove('hidden');
+                document.getElementById('online-game-info').classList.remove('hidden');
+                
+                // Update player info
+                document.getElementById('player-you').textContent = playerName;
+                document.getElementById('player-opponent').textContent = 'Waiting...';
+                
+                startNewGame();
+                listenToGameUpdates(gameId);
+                
+                showMessage(`Game created! Share ID: <span class="font-mono">${gameId}</span>`, 'success');
+                
+            } catch (error) {
+                console.error('Error creating game:', error);
+                showMessage('Failed to create game: ' + error.message, 'error');
+            }
+        }
+        
+        async function joinOnlineGame() {
+            const gameId = document.getElementById('join-game-input').value.trim().toUpperCase();
+            
+            if (!gameId) {
+                showMessage('Please enter a game ID', 'error');
+                return;
+            }
+            
+            if (!gameState.currentUser) {
+                showMessage('Please login first', 'error');
+                return;
+            }
+            
+            try {
+                const gameDoc = await getDoc(doc(db, 'games', gameId));
+                
+                if (!gameDoc.exists()) {
+                    showMessage('Game not found', 'error');
+                    return;
+                }
+                
+                const gameData = gameDoc.data();
+                
+                // Check if game is already full
+                if (gameData.playerO) {
+                    showMessage('Game is full', 'error');
+                    return;
+                }
+                
+                // Check if user is already in the game
+                if (gameData.playerX.uid === gameState.currentUser.uid) {
+                    showMessage('You are already in this game as Player X', 'info');
+                    // Rejoin as player X
+                    gameState.gameMode = 'online';
+                    gameState.mySymbol = 'X';
+                    gameState.isPlayerTurn = gameData.currentPlayer === 'X';
+                    gameState.gameId = gameId;
+                    
+                    onlineControls.classList.add('hidden');
+                    gameBoardContainer.classList.remove('hidden');
+                    document.getElementById('online-game-info').classList.remove('hidden');
+                    
+                    document.getElementById('player-you').textContent = gameData.playerX.name;
+                    document.getElementById('player-opponent').textContent = gameData.playerO?.name || 'Waiting...';
+                    
+                    startNewGame();
+                    listenToGameUpdates(gameId);
+                    return;
+                }
+                
+                // Join as player O
+                const playerName = gameState.userProfile?.displayName || 'Anonymous';
+                const playerUsername = gameState.userProfile?.username || `guest_${gameState.currentUser.uid.slice(0, 6)}`;
+                
+                await updateDoc(doc(db, 'games', gameId), {
+                    playerO: {
+                        uid: gameState.currentUser.uid,
+                        name: playerName,
+                        username: playerUsername
+                    },
+                    status: 'active',
+                    updatedAt: serverTimestamp()
+                });
+                
+                gameState.gameMode = 'online';
+                gameState.mySymbol = 'O';
+                gameState.isPlayerTurn = gameData.currentPlayer === 'O';
+                gameState.gameId = gameId;
+                
+                onlineControls.classList.add('hidden');
+                gameBoardContainer.classList.remove('hidden');
+                document.getElementById('online-game-info').classList.remove('hidden');
+                
+                document.getElementById('player-you').textContent = playerName;
+                document.getElementById('player-opponent').textContent = gameData.playerX.name;
+                
+                startNewGame();
+                listenToGameUpdates(gameId);
+                
+                showMessage(`Joined game against ${gameData.playerX.name}!`, 'success');
+                
+            } catch (error) {
+                console.error('Error joining game:', error);
+                showMessage('Failed to join game: ' + error.message, 'error');
+            }
+        }
+        
+        function listenToGameUpdates(gameId) {
+            const gameRef = doc(db, 'games', gameId);
+            
+            // Unsubscribe from previous listener
+            if (gameState.unsubscribeGame) {
+                gameState.unsubscribeGame();
+            }
+            
+            gameState.unsubscribeGame = onSnapshot(gameRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    showMessage('Game ended by host', 'error');
+                    setTimeout(() => {
+                        backToModes();
+                    }, 2000);
+                    return;
+                }
+                
+                const gameData = snapshot.data();
+                
+                // Update opponent info
+                if (gameData.playerO && gameData.playerX.uid === gameState.currentUser.uid) {
+                    document.getElementById('player-opponent').textContent = gameData.playerO.name;
+                } else if (gameData.playerX.uid !== gameState.currentUser.uid) {
+                    document.getElementById('player-opponent').textContent = gameData.playerX.name;
+                }
+                
+                gameState.board = gameData.board || Array(9).fill('');
+                gameState.currentPlayer = gameData.currentPlayer || 'X';
+                gameState.gameActive = gameData.gameActive !== false;
+                
+                // Update turn indicator
+                gameState.isPlayerTurn = (gameState.currentPlayer === gameState.mySymbol);
+                
+                updateBoard();
+                updateStatus();
+                
+                // Check for win
+                const result = checkGameResult();
+                if (result.winner || result.draw) {
+                    gameState.gameActive = false;
+                    handleGameEnd(result.winner, result.winningCells, result.draw);
+                }
+            }, (error) => {
+                console.error('Game update error:', error);
+                showMessage('Connection error. Try rejoining.', 'error');
+            });
+        }
+        
+        // Game Logic
+        function startNewGame() {
+            gameState.board = Array(9).fill('');
+            gameState.currentPlayer = 'X';
+            gameState.gameActive = true;
+            
+            updateBoard();
+            updateStatus();
+        }
+        
+        function updateBoard() {
+            boardGrid.innerHTML = '';
+            
+            gameState.board.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.className = `game-cell rounded-xl flex items-center justify-center cursor-pointer transition-all duration-300 ${cell ? 'occupied' : ''}`;
+                
+                if (cell) {
+                    cellElement.classList.add(cell === 'X' ? 'x-mark' : 'o-mark');
+                    cellElement.innerHTML = `<span class="cell-content text-5xl">${cell}</span>`;
+                }
+                
+                if (gameState.gameActive && !cell) {
+                    cellElement.addEventListener('click', () => makeMove(index));
+                }
+                
+                boardGrid.appendChild(cellElement);
+            });
+        }
+        
+        function makeMove(index) {
+            if (!gameState.gameActive || gameState.board[index]) return;
+            
+            if (gameState.gameMode === 'online' && !gameState.isPlayerTurn) {
+                showMessage("Wait for your turn!", 'warning');
+                return;
+            }
+            
+            // Play tap sound
+            if (gameState.soundsEnabled) {
+                tapSound.currentTime = 0;
+                tapSound.play().catch(e => console.log("Sound play failed"));
+            }
+            
+            // Make move locally
+            gameState.board[index] = gameState.currentPlayer;
+            
+            // Check for win
+            const result = checkGameResult();
+            
+            if (gameState.gameMode === 'online') {
+                updateOnlineGame(result);
+            } else {
+                if (result.winner || result.draw) {
+                    gameState.gameActive = false;
+                    handleGameEnd(result.winner, result.winningCells, result.draw);
+                } else {
+                    gameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+                    
+                    if (gameState.gameMode === 'ai' && gameState.currentPlayer === 'O') {
+                        setTimeout(makeAIMove, 500);
+                    }
+                }
+                
+                updateBoard();
+                updateStatus();
+            }
+        }
+        
+        async function updateOnlineGame(result) {
+            if (!gameState.gameId || !gameState.currentUser) return;
+            
+            const gameActive = !(result.winner || result.draw);
+            const nextPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+            
+            try {
+                await updateDoc(doc(db, 'games', gameState.gameId), {
+                    board: gameState.board,
+                    currentPlayer: nextPlayer,
+                    gameActive: gameActive,
+                    updatedAt: serverTimestamp(),
+                    ...(result.winner && { winner: result.winner, winningCells: result.winningCells }),
+                    ...(result.draw && { draw: true })
+                });
+                
+                gameState.currentPlayer = nextPlayer;
+                gameState.isPlayerTurn = false;
+                updateBoard();
+                updateStatus();
+                
+            } catch (error) {
+                console.error('Error updating game:', error);
+                showMessage('Failed to sync move', 'error');
+            }
+        }
+        
+        function makeAIMove() {
+            if (!gameState.gameActive) return;
+            
+            // Simple AI strategy
+            const emptyCells = gameState.board
+                .map((cell, index) => cell === '' ? index : -1)
+                .filter(index => index !== -1);
+            
+            if (emptyCells.length === 0) return;
+            
+            let moveIndex = -1;
+            
+            // 1. Try to win
+            for (let cell of emptyCells) {
+                const testBoard = [...gameState.board];
+                testBoard[cell] = 'O';
+                if (checkGameResult(testBoard).winner === 'O') {
+                    moveIndex = cell;
+                    break;
+                }
+            }
+            
+            // 2. Try to block
+            if (moveIndex === -1) {
+                for (let cell of emptyCells) {
+                    const testBoard = [...gameState.board];
+                    testBoard[cell] = 'X';
+                    if (checkGameResult(testBoard).winner === 'X') {
+                        moveIndex = cell;
+                        break;
+                    }
+                }
+            }
+            
+            // 3. Take center
+            if (moveIndex === -1 && gameState.board[4] === '') {
+                moveIndex = 4;
+            }
+            
+            // 4. Take random corner
+            if (moveIndex === -1) {
+                const corners = [0, 2, 6, 8].filter(i => gameState.board[i] === '');
+                if (corners.length > 0) {
+                    moveIndex = corners[Math.floor(Math.random() * corners.length)];
+                }
+            }
+            
+            // 5. Take random side
+            if (moveIndex === -1) {
+                const sides = [1, 3, 5, 7].filter(i => gameState.board[i] === '');
+                if (sides.length > 0) {
+                    moveIndex = sides[Math.floor(Math.random() * sides.length)];
+                }
+            }
+            
+            // Make the move
+            if (moveIndex !== -1) {
+                gameState.board[moveIndex] = 'O';
+                
+                // Play sound for AI move
+                if (gameState.soundsEnabled) {
+                    setTimeout(() => {
+                        tapSound.currentTime = 0;
+                        tapSound.play().catch(e => console.log("Sound play failed"));
+                    }, 300);
+                }
+                
+                const result = checkGameResult();
+                if (result.winner || result.draw) {
+                    gameState.gameActive = false;
+                    handleGameEnd(result.winner, result.winningCells, result.draw);
+                } else {
+                    gameState.currentPlayer = 'X';
+                }
+                
+                updateBoard();
+                updateStatus();
+            }
+        }
+        
+        function checkGameResult(board = gameState.board) {
+            const winPatterns = [
+                [0,1,2], [3,4,5], [6,7,8], // Rows
+                [0,3,6], [1,4,7], [2,5,8], // Columns
+                [0,4,8], [2,4,6]           // Diagonals
+            ];
+            
+            for (let pattern of winPatterns) {
+                const [a,b,c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return {
+                        winner: board[a],
+                        winningCells: pattern,
+                        draw: false
+                    };
+                }
+            }
+            
+            if (board.every(cell => cell !== '')) {
+                return {
+                    winner: null,
+                    winningCells: null,
+                    draw: true
+                };
+            }
+            
+            return {
+                winner: null,
+                winningCells: null,
+                draw: false
+            };
+        }
+        
+        async function handleGameEnd(winner, winningCells, isDraw = false) {
+            // Highlight winning cells
+            if (winningCells) {
+                winningCells.forEach(index => {
+                    const cells = document.querySelectorAll('.game-cell');
+                    if (cells[index]) {
+                        cells[index].classList.add('winning-cell');
+                        cells[index].classList.add('winner-glow');
+                    }
+                });
+            }
+            
+            // Play sound
+            if (gameState.soundsEnabled) {
+                if (winner) {
+                    winSound.currentTime = 0;
+                    winSound.play().catch(e => console.log("Sound play failed"));
+                } else if (isDraw) {
+                    drawSound.currentTime = 0;
+                    drawSound.play().catch(e => console.log("Sound play failed"));
+                }
+            }
+            
+            // Update scores
+            if (winner) {
+                gameState.scores[winner]++;
+                showMessage(`${winner} wins! 🎉`, 'success');
+                
+                // Update stats for registered users
+                if (!gameState.isGuest && gameState.currentUser) {
+                    await updateUserStats(winner === gameState.mySymbol ? 'win' : 'loss');
+                }
+            } else if (isDraw) {
+                gameState.scores.draws++;
+                showMessage("It's a draw! 🤝", 'info');
+                
+                if (!gameState.isGuest && gameState.currentUser) {
+                    await updateUserStats('draw');
+                }
+            }
+            
+            updateScoreDisplay();
+            
+            // Auto-restart for local/AI games
+            if (gameState.gameMode !== 'online') {
+                setTimeout(() => {
+                    startNewGame();
+                }, 3000);
+            }
+        }
+        
+        async function updateUserStats(result) {
+            if (!gameState.currentUser || gameState.isGuest) return;
+            
+            try {
+                const userRef = doc(db, 'users', gameState.currentUser.uid);
+                const updateData = {
+                    lastSeen: serverTimestamp()
+                };
+                
+                if (result === 'win') {
+                    updateData.wins = increment(1);
+                    gameState.playerStats.wins++;
+                } else if (result === 'loss') {
+                    updateData.losses = increment(1);
+                    gameState.playerStats.losses++;
+                } else if (result === 'draw') {
+                    updateData.draws = increment(1);
+                    gameState.playerStats.draws++;
+                }
+                
+                await updateDoc(userRef, updateData);
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+        
+        function updateStatus() {
+            const statusElement = document.getElementById('status-message');
+            const turnElement = document.getElementById('turn-indicator');
+            const dot = turnElement?.querySelector('.status-dot');
+            
+            if (!gameState.gameActive) {
+                statusElement.textContent = "Game Over";
+                if (turnElement) {
+                    turnElement.innerHTML = '<span class="status-dot offline mr-2"></span><span>Game finished</span>';
+                }
+                return;
+            }
+            
+            if (gameState.gameMode === 'online') {
+                const playerText = gameState.mySymbol === 'X' ? ' (You)' : ' (You)';
+                const opponentText = gameState.isPlayerTurn ? 'Your turn' : 'Opponent\'s turn';
+                const dotClass = gameState.isPlayerTurn ? 'online' : 'waiting';
+                
+                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400'}">${gameState.currentPlayer}${playerText}</span>`;
+                if (turnElement) {
+                    turnElement.innerHTML = `<span class="status-dot ${dotClass} mr-2"></span><span>${opponentText}</span>`;
+                }
+                
+            } else if (gameState.gameMode === 'ai') {
+                const playerText = gameState.currentPlayer === 'X' ? 'Your turn' : 'AI thinking...';
+                const dotClass = gameState.currentPlayer === 'X' ? 'online' : 'waiting';
+                
+                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400'}">${gameState.currentPlayer}</span>`;
+                if (turnElement) {
+                    turnElement.innerHTML = `<span class="status-dot ${dotClass} mr-2"></span><span>${playerText}</span>`;
+                }
+                
+            } else {
+                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400'}">${gameState.currentPlayer}</span>'s turn`;
+                if (turnElement) {
+                    turnElement.innerHTML = '<span class="status-dot online mr-2"></span><span>Local game</span>';
+                }
+            }
+        }
+        
+        function updateScoreDisplay() {
+            document.getElementById('score-x').textContent = gameState.scores.X;
+            document.getElementById('score-o').textContent = gameState.scores.O;
+            document.getElementById('score-draws').textContent = gameState.scores.draws;
+        }
+        
+        function restartGame() {
+            startNewGame();
+        }
+        
+        // Audio Controls
+        function toggleAudio() {
+            gameState.audioEnabled = !gameState.audioEnabled;
+            const button = document.getElementById('audio-toggle');
+            
+            if (gameState.audioEnabled) {
+                bgMusic.play().catch(e => console.log("Audio play failed"));
+                button.innerHTML = '<span>🎵</span><span>Music: On</span>';
+                button.classList.remove('bg-gray-800');
+                button.classList.add('bg-indigo-600/30');
+            } else {
+                bgMusic.pause();
+                button.innerHTML = '<span>🎵</span><span>Music: Off</span>';
+                button.classList.remove('bg-indigo-600/30');
+                button.classList.add('bg-gray-800');
+            }
+        }
+        
+        function toggleSounds() {
+            gameState.soundsEnabled = !gameState.soundsEnabled;
+            const button = document.getElementById('sound-toggle');
+            
+            if (gameState.soundsEnabled) {
+                button.innerHTML = '<span>🔊</span><span>Sounds: On</span>';
+                button.classList.remove('bg-gray-800');
+                button.classList.add('bg-indigo-600/30');
+            } else {
+                button.innerHTML = '<span>🔊</span><span>Sounds: Off</span>';
+                button.classList.remove('bg-indigo-600/30');
+                button.classList.add('bg-gray-800');
+            }
+        }
+        
+        // Utility Functions
+        function copyGameId() {
+            const gameId = document.getElementById('game-id-display').textContent;
+            navigator.clipboard.writeText(gameId).then(() => {
+                showMessage('Game ID copied!', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = gameId;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showMessage('Game ID copied!', 'success');
+            });
+        }
+        
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+        
+        // Make functions available globally
+        window.setGameMode = setGameMode;
+        window.showOnlineMode = showOnlineMode;
+        window.createOnlineGame = createOnlineGame;
+        window.joinOnlineGame = joinOnlineGame;
+        window.backToModes = backToModes;
+        window.copyGameId = copyGameId;
+        window.showProfileModal = showProfileModal;
+        window.closeProfileModal = closeProfileModal;
+        
+    </script>
+</body>
+</html>
