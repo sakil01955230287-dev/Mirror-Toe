@@ -3,120 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mirror's Tic-Tac-Toe | Premium Edition</title>
+    <title>Mirror's Tic-Tac-Toe | Royal Edition</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
         
         :root {
-            --primary-color: #4f46e5;
-            --secondary-color: #7c3aed;
-            --accent-color: #10b981;
-            --dark-bg: #0f172a;
-            --card-bg: rgba(15, 23, 42, 0.9);
-            --glass-effect: rgba(255, 255, 255, 0.05);
+            --primary-gold: #D4AF37;
+            --secondary-gold: #FCF6BA;
+            --dark-bg: #0B1026;
+            --card-bg: rgba(11, 16, 38, 0.7);
+            --glass-effect: rgba(212, 175, 55, 0.1);
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: var(--dark-bg);
             min-height: 100vh;
             overflow-x: hidden;
         }
         
-        .game-title {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        .royal-title {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
         }
         
-        .glass-card {
-            background: var(--card-bg);
+        @keyframes shine {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .silver-gradient {
+            background: linear-gradient(to right, #A0A0A0, #F0F0F0, #D0D0D0, #FFFFFF, #B0B0B0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shine 6s linear infinite;
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-effect);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.08);
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.3),
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .btn-royal {
+            background: linear-gradient(135deg, #8B7355, #D4AF37, #FCF6BA);
+            color: #0B1026;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            font-weight: 600;
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
         
-        .btn-primary:hover {
+        .btn-royal:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
         }
         
-        .btn-primary::after {
+        .btn-royal::after {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             transition: left 0.5s;
         }
         
-        .btn-primary:hover::after {
+        .btn-royal:hover::after {
             left: 100%;
         }
         
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .btn-noble {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
             transition: all 0.3s ease;
+            color: #FCF6BA;
         }
         
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.2);
+        .btn-noble:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.3);
         }
         
         .game-cell {
             aspect-ratio: 1;
-            background: rgba(30, 41, 59, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
         
         .game-cell:hover:not(.occupied) {
-            background: rgba(51, 65, 85, 0.6);
-            border-color: rgba(79, 70, 229, 0.5);
+            background: rgba(51, 65, 85, 0.4);
+            border-color: rgba(212, 175, 55, 0.4);
             transform: scale(1.02);
         }
         
-        .game-cell.x-mark {
-            color: #f87171;
+        /* Updated X and O styles to match the title effects */
+        .game-cell.x-mark .cell-content {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
         }
         
-        .game-cell.o-mark {
-            color: #60a5fa;
+        .game-cell.o-mark .cell-content {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            background: linear-gradient(to right, #A0A0A0, #F0F0F0, #D0D0D0, #FFFFFF, #B0B0B0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shine 6s linear infinite;
+            text-shadow: 0 0 15px rgba(192, 192, 192, 0.5);
+            filter: drop-shadow(0 0 8px rgba(192, 192, 192, 0.4));
         }
         
         .winning-cell {
             animation: pulse-win 2s infinite;
-            background: linear-gradient(45deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1)) !important;
+            background: linear-gradient(45deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1)) !important;
         }
         
         @keyframes pulse-win {
-            0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+            0%, 100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.8); }
         }
         
         .cell-content {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Cinzel', serif;
             font-weight: 700;
         }
         
@@ -148,7 +187,7 @@
             position: relative;
             border: double 2px transparent;
             background-image: linear-gradient(var(--card-bg), var(--card-bg)), 
-                              linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                              linear-gradient(135deg, #8B7355, #D4AF37);
             background-origin: border-box;
             background-clip: padding-box, border-box;
         }
@@ -162,9 +201,9 @@
             pointer-events: none;
             z-index: -1;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 115, 85, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(192, 192, 192, 0.03) 0%, transparent 50%);
         }
         
         .status-dot {
@@ -177,7 +216,7 @@
         
         .online { background-color: #10b981; }
         .offline { background-color: #ef4444; }
-        .waiting { background-color: #f59e0b; }
+        .waiting { background-color: #D4AF37; }
         
         .player-card {
             transition: all 0.3s ease;
@@ -186,7 +225,7 @@
         
         .player-card:hover {
             transform: translateX(4px);
-            border-left-color: var(--primary-color);
+            border-left-color: var(--primary-gold);
         }
         
         .winner-glow {
@@ -194,13 +233,48 @@
         }
         
         @keyframes winnerGlow {
-            from { filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5)); }
-            to { filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8)); }
+            from { filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5)); }
+            to { filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.8)); }
         }
         
         .game-id-badge {
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .reflection {
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
+            transform: scaleY(-1) translateY(-10px);
+            opacity: 0.2;
+            filter: blur(2px);
+            pointer-events: none;
+        }
+        
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .create-account-text {
+            background: linear-gradient(to right, #A0A0A0, #F0F0F0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .create-account-text:hover {
+            background: linear-gradient(to right, #D4AF37, #FCF6BA);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
     </style>
 </head>
@@ -210,102 +284,148 @@
     
     <!-- Audio Elements -->
     <audio id="bg-music" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-chill-hop-164.mp3" type="audio/mpeg">
+        <source src="bgm.mp3" type="audio/mpeg">
     </audio>
     <audio id="tap-sound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-water-drop-echo-1097.mp3" type="audio/mpeg">
+        <source src="tap.mp3" type="audio/mpeg">
     </audio>
     <audio id="win-sound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+        <source src="win.mp3" type="audio/mpeg">
     </audio>
     <audio id="draw-sound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3" type="audio/mpeg">
+        <source src="draw.mp3" type="audio/mpeg">
     </audio>
     
     <!-- Main Container -->
     <div class="min-h-screen flex items-center justify-center p-4">
         <div id="app-container" class="w-full max-w-md mx-auto">
             <!-- Welcome Screen -->
-            <div id="welcome-view" class="glass-card rounded-2xl p-8 slide-in">
+            <div id="welcome-view" class="glass-panel rounded-2xl p-8 slide-in">
                 <div class="text-center mb-8">
-                    <h1 class="game-title text-4xl font-bold mb-2">Mirror's Tic-Tac-Toe</h1>
-                    <p class="text-gray-400">Premium Online Edition</p>
+                    <h1 class="royal-title text-4xl font-bold mb-2">Mr. MirrorToe</h1>
+                    <p class="silver-gradient text-sm tracking-[0.3em] uppercase">Royal Edition</p>
                 </div>
                 
                 <div id="welcome-content" class="space-y-6">
                     <div class="text-center">
-                        <p class="text-gray-300 mb-6">Welcome to the ultimate Tic-Tac-Toe experience! Play locally, challenge AI, or battle friends online in real-time.</p>
+                        <p class="text-gray-300 mb-6">Enter the royal arena of strategic mastery. Play locally, challenge the royal AI, or battle nobility online in real-time.</p>
                     </div>
                     
                     <div class="space-y-4">
                         <button id="quick-play-btn" 
-                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                                class="btn-royal w-full py-4 rounded-xl font-semibold flex items-center justify-center space-x-3">
                             <span>⚡</span>
                             <span>Quick Play (Guest)</span>
                         </button>
                         
-                        <button id="create-account-btn" 
-                                class="btn-secondary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
-                            <span>👤</span>
-                            <span>Create Account</span>
+                        <button id="royal-login-btn" 
+                                class="btn-noble w-full py-4 rounded-xl font-semibold flex items-center justify-center space-x-3">
+                            <span>👑</span>
+                            <span>Royal Login</span>
                         </button>
+                        
+                        <div class="text-center pt-2">
+                            <button id="create-account-text" 
+                                    class="create-account-text text-sm">
+                                Create Account
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="text-center text-gray-500 text-sm pt-4 border-t border-gray-800">
-                        <p>No registration needed for guest play. Create an account to save your stats!</p>
+                        <p>No registration needed for guest play. Create an account to join the nobility!</p>
                     </div>
                 </div>
                 
                 <!-- Account Creation Form (Initially Hidden) -->
                 <div id="account-form" class="space-y-6 hidden">
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Display Name</label>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Royal Name</label>
                         <input type="text" id="display-name" 
-                               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                               placeholder="Enter your name">
+                               class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
+                               placeholder="Enter your royal name">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
                         <input type="text" id="username" 
-                               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                               class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
                                placeholder="Choose a unique username">
-                        <p class="text-xs text-gray-500 mt-1">This will be your game identity</p>
+                        <p class="text-xs text-gray-500 mt-1">This will be your royal identity</p>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Username</label>
-                        <input type="text" id="confirm-username" 
-                               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                               placeholder="Re-enter your username">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Passcode</label>
+                        <input type="password" id="passcode" 
+                               class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
+                               placeholder="Create a secure passcode">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Passcode</label>
+                        <input type="password" id="confirm-passcode" 
+                               class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
+                               placeholder="Re-enter your passcode">
                     </div>
                     
                     <div class="space-y-4">
                         <button id="register-btn" 
-                                class="btn-primary w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center">
-                            <span id="auth-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span>
-                            Create Account & Play
+                                class="btn-royal w-full py-3 rounded-xl font-semibold flex items-center justify-center">
+                            <span id="auth-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900 mr-2"></span>
+                            Join the Royal Court
                         </button>
                         
                         <button id="back-to-welcome" 
-                                class="btn-secondary w-full py-3 rounded-xl font-semibold text-white">
-                            ← Back to Welcome
+                                class="btn-noble w-full py-3 rounded-xl font-semibold">
+                            ← Return to Welcome
                         </button>
                     </div>
                     
-                    <div id="auth-error" class="hidden p-3 bg-red-900/30 border border-red-700/50 rounded-xl text-red-300 text-sm"></div>
+                    <div id="auth-error" class="hidden p-3 bg-red-900/20 border border-red-700/30 rounded-xl text-red-300 text-sm"></div>
+                </div>
+                
+                <!-- Login Form (Initially Hidden) -->
+                <div id="login-form" class="space-y-6 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                        <input type="text" id="login-username" 
+                               class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
+                               placeholder="Enter your username">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Passcode</label>
+                        <input type="password" id="login-passcode" 
+                               class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
+                               placeholder="Enter your passcode">
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <button id="login-btn" 
+                                class="btn-royal w-full py-3 rounded-xl font-semibold flex items-center justify-center">
+                            <span id="login-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900 mr-2"></span>
+                            Enter Royal Court
+                        </button>
+                        
+                        <button id="back-to-welcome-from-login" 
+                                class="btn-noble w-full py-3 rounded-xl font-semibold">
+                            ← Return to Welcome
+                        </button>
+                    </div>
+                    
+                    <div id="login-error" class="hidden p-3 bg-red-900/20 border border-red-700/30 rounded-xl text-red-300 text-sm"></div>
                 </div>
             </div>
             
             <!-- Game View (Initially Hidden) -->
             <div id="game-view" class="hidden">
                 <!-- Header -->
-                <div class="glass-card rounded-2xl p-6 mb-6 slide-in">
+                <div class="glass-panel rounded-2xl p-6 mb-6 slide-in">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h1 class="game-title text-2xl font-bold">Mirror's Tic-Tac-Toe</h1>
+                            <h1 class="royal-title text-2xl font-bold">Mr. MirrorToe</h1>
                             <div id="user-info" class="text-sm text-gray-400 mt-1 flex items-center">
-                                <span id="current-username" class="text-indigo-300 font-medium mr-2"></span>
+                                <span id="current-username" class="text-yellow-300 font-medium mr-2"></span>
                                 <span id="online-status" class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full flex items-center">
                                     <span class="status-dot online mr-1"></span>
                                     <span>Online</span>
@@ -313,11 +433,11 @@
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <button id="profile-btn" class="btn-secondary px-3 py-2 rounded-xl text-sm">
-                                👤 Profile
+                            <button id="profile-btn" class="btn-noble px-3 py-2 rounded-xl text-sm">
+                                👑 Profile
                             </button>
-                            <button id="logout-btn" class="btn-secondary px-3 py-2 rounded-xl text-sm">
-                                Logout
+                            <button id="logout-btn" class="btn-noble px-3 py-2 rounded-xl text-sm">
+                                Exit Court
                             </button>
                         </div>
                     </div>
@@ -326,91 +446,91 @@
                     <div id="scoreboard" class="gradient-border rounded-xl p-4">
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div>
-                                <div class="text-2xl font-bold text-red-400" id="score-x">0</div>
-                                <div class="text-xs text-gray-400">Player X</div>
+                                <div class="royal-title text-2xl font-bold" id="score-x">0</div>
+                                <div class="text-xs text-gray-400">Royal X</div>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-gray-300" id="score-draws">0</div>
-                                <div class="text-xs text-gray-400">Draws</div>
+                                <div class="silver-gradient text-2xl font-bold" id="score-draws">0</div>
+                                <div class="text-xs text-gray-400">Stalemates</div>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-blue-400" id="score-o">0</div>
-                                <div class="text-xs text-gray-400">Player O</div>
+                                <div class="silver-gradient text-2xl font-bold" id="score-o">0</div>
+                                <div class="text-xs text-gray-400">Noble O</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Game Mode Selection -->
-                <div id="mode-selection" class="glass-card rounded-2xl p-6 mb-6 slide-in">
-                    <h2 class="text-xl font-semibold text-white mb-4 text-center">Select Game Mode</h2>
+                <div id="mode-selection" class="glass-panel rounded-2xl p-6 mb-6 slide-in">
+                    <h2 class="text-xl font-semibold text-white mb-4 text-center">Select Your Challenge</h2>
                     <div class="space-y-4">
                         <button onclick="setGameMode('local')" 
-                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
-                            <span>👥</span>
-                            <span>Local Duel (2 Players)</span>
+                                class="btn-royal w-full py-4 rounded-xl font-semibold flex items-center justify-center space-x-3">
+                            <span>⚔️</span>
+                            <span>Royal Duel (2 Players)</span>
                         </button>
                         
                         <button onclick="setGameMode('ai')" 
-                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                                class="btn-royal w-full py-4 rounded-xl font-semibold flex items-center justify-center space-x-3">
                             <span>🤖</span>
-                            <span>AI Challenge</span>
+                            <span>Challenge Mr. Mirror</span>
                         </button>
                         
                         <button onclick="showOnlineMode()" 
-                                class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center space-x-3">
+                                class="btn-royal w-full py-4 rounded-xl font-semibold flex items-center justify-center space-x-3">
                             <span>🌐</span>
-                            <span>Online Battle</span>
+                            <span>Royal Battle Online</span>
                         </button>
                     </div>
                 </div>
                 
                 <!-- Online Controls -->
-                <div id="online-controls" class="glass-card rounded-2xl p-6 mb-6 hidden slide-in">
-                    <h2 class="text-xl font-semibold text-white mb-4 text-center">Online Battle</h2>
+                <div id="online-controls" class="glass-panel rounded-2xl p-6 mb-6 hidden slide-in">
+                    <h2 class="text-xl font-semibold text-white mb-4 text-center">Royal Battle Online</h2>
                     
                     <div class="space-y-4 mb-6">
                         <div class="text-center">
-                            <div class="text-sm text-gray-400 mb-1">Your Game ID</div>
-                            <div id="game-id-display" class="game-id-badge text-lg text-indigo-300 bg-gray-900/50 p-3 rounded-xl break-all"></div>
-                            <button onclick="copyGameId()" class="text-xs text-gray-400 hover:text-white mt-2 transition">
+                            <div class="text-sm text-gray-400 mb-1">Your Royal Seal</div>
+                            <div id="game-id-display" class="game-id-badge text-lg text-yellow-300 p-3 rounded-xl break-all"></div>
+                            <button onclick="copyGameId()" class="text-xs text-gray-400 hover:text-yellow-300 mt-2 transition">
                                 📋 Copy to share
                             </button>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Join Existing Game</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Join Existing Battle</label>
                             <input type="text" id="join-game-input" 
-                                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                   placeholder="Enter friend's Game ID">
+                                   class="w-full px-4 py-3 bg-gray-900/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"
+                                   placeholder="Enter opponent's Royal Seal">
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <button onclick="createOnlineGame()" 
-                                class="btn-primary py-3 rounded-xl font-semibold text-white">
-                            Create Game
+                                class="btn-royal py-3 rounded-xl font-semibold">
+                            Create Battle
                         </button>
                         
                         <button onclick="joinOnlineGame()" 
-                                class="btn-secondary py-3 rounded-xl font-semibold text-white">
-                            Join Game
+                                class="btn-noble py-3 rounded-xl font-semibold">
+                            Join Battle
                         </button>
                     </div>
                     
                     <button onclick="backToModes()" 
-                            class="w-full mt-4 py-2 text-gray-400 hover:text-white text-sm transition">
-                        ← Back to modes
+                            class="w-full mt-4 py-2 text-gray-400 hover:text-yellow-300 text-sm transition">
+                        ← Return to challenges
                     </button>
                 </div>
                 
                 <!-- Game Board -->
-                <div id="game-board-container" class="glass-card rounded-2xl p-6 hidden slide-in">
-                    <div id="game-status" class="text-center mb-6 p-4 bg-gray-900/50 rounded-xl">
+                <div id="game-board-container" class="glass-panel rounded-2xl p-6 hidden slide-in">
+                    <div id="game-status" class="text-center mb-6 p-4 bg-gray-900/30 rounded-xl">
                         <div id="status-message" class="text-xl font-semibold"></div>
                         <div id="turn-indicator" class="text-sm text-gray-400 mt-2 flex items-center justify-center">
                             <span class="status-dot waiting mr-2"></span>
-                            <span>Waiting...</span>
+                            <span>Preparing the arena...</span>
                         </div>
                     </div>
                     
@@ -421,27 +541,27 @@
                     
                     <!-- Game Controls -->
                     <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
+                        <div id="local-controls" class="grid grid-cols-2 gap-4">
                             <button id="restart-game" 
-                                    class="btn-secondary py-3 rounded-xl font-semibold text-white">
-                                Restart Game
+                                    class="btn-noble py-3 rounded-xl font-semibold">
+                                Reset Arena
                             </button>
                             
                             <button id="change-mode" 
-                                    class="btn-primary py-3 rounded-xl font-semibold text-white">
-                                Change Mode
+                                    class="btn-royal py-3 rounded-xl font-semibold">
+                                Change Challenge
                             </button>
                         </div>
                         
                         <div class="flex items-center justify-between">
                             <button id="audio-toggle" 
-                                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm font-medium transition flex items-center space-x-2">
+                                    class="px-4 py-2 bg-yellow-600/30 rounded-xl text-sm font-medium transition flex items-center space-x-2">
                                 <span>🎵</span>
                                 <span>Music: On</span>
                             </button>
                             
                             <button id="sound-toggle" 
-                                    class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm font-medium transition flex items-center space-x-2">
+                                    class="px-4 py-2 bg-yellow-600/30 rounded-xl text-sm font-medium transition flex items-center space-x-2">
                                 <span>🔊</span>
                                 <span>Sounds: On</span>
                             </button>
@@ -451,13 +571,13 @@
                     <!-- Online Players Info -->
                     <div id="online-game-info" class="mt-6 pt-6 border-t border-gray-800 hidden">
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center p-3 bg-gray-900/50 rounded-xl">
-                                <div class="text-sm text-gray-400">You</div>
-                                <div id="player-you" class="font-semibold text-indigo-300"></div>
+                            <div class="text-center p-3 bg-gray-900/30 rounded-xl">
+                                <div class="text-sm text-gray-400">Your Majesty</div>
+                                <div id="player-you" class="font-semibold royal-title"></div>
                             </div>
-                            <div class="text-center p-3 bg-gray-900/50 rounded-xl">
+                            <div class="text-center p-3 bg-gray-900/30 rounded-xl">
                                 <div class="text-sm text-gray-400">Opponent</div>
-                                <div id="player-opponent" class="font-semibold text-purple-300"></div>
+                                <div id="player-opponent" class="font-semibold silver-gradient"></div>
                             </div>
                         </div>
                     </div>
@@ -468,39 +588,45 @@
     
     <!-- Profile Modal -->
     <div id="profile-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden p-4">
-        <div class="glass-card rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="glass-panel rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white">Player Profile</h3>
-                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                <h3 class="text-xl font-bold royal-title">Royal Profile</h3>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-yellow-300 text-2xl">&times;</button>
             </div>
             
             <div class="space-y-6">
                 <div class="text-center">
-                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mx-auto flex items-center justify-center text-2xl font-bold mb-3">
-                        <span id="profile-avatar">👤</span>
+                    <div class="w-20 h-20 bg-gradient-to-br from-yellow-600 to-yellow-300 rounded-full mx-auto flex items-center justify-center text-2xl font-bold mb-3">
+                        <span id="profile-avatar">👑</span>
                     </div>
                     <h4 id="profile-name" class="text-xl font-bold text-white"></h4>
-                    <p id="profile-username" class="text-gray-400"></p>
+                    <p id="profile-username" class="silver-gradient"></p>
                 </div>
                 
                 <div class="grid grid-cols-3 gap-4 text-center">
-                    <div class="p-3 bg-gray-900/50 rounded-xl">
-                        <div class="text-2xl font-bold text-green-400" id="profile-wins">0</div>
-                        <div class="text-xs text-gray-400">Wins</div>
+                    <div class="p-3 bg-gray-900/30 rounded-xl">
+                        <div class="royal-title text-2xl font-bold" id="profile-wins">0</div>
+                        <div class="text-xs text-gray-400">Victories</div>
                     </div>
-                    <div class="p-3 bg-gray-900/50 rounded-xl">
-                        <div class="text-2xl font-bold text-red-400" id="profile-losses">0</div>
-                        <div class="text-xs text-gray-400">Losses</div>
+                    <div class="p-3 bg-gray-900/30 rounded-xl">
+                        <div class="silver-gradient text-2xl font-bold" id="profile-losses">0</div>
+                        <div class="text-xs text-gray-400">Defeats</div>
                     </div>
-                    <div class="p-3 bg-gray-900/50 rounded-xl">
-                        <div class="text-2xl font-bold text-blue-400" id="profile-draws">0</div>
-                        <div class="text-xs text-gray-400">Draws</div>
+                    <div class="p-3 bg-gray-900/30 rounded-xl">
+                        <div class="silver-gradient text-2xl font-bold" id="profile-draws">0</div>
+                        <div class="text-xs text-gray-400">Stalemates</div>
                     </div>
                 </div>
                 
+                <!-- Contact Button Added -->
                 <div class="pt-4 border-t border-gray-800">
+                    <button onclick="window.open('https://vcarrd.com/shakil-mr-mirror/profile', '_blank')" 
+                            class="btn-noble w-full py-3 rounded-xl font-semibold mb-4">
+                        📞 Contact
+                    </button>
+                    
                     <button onclick="closeProfileModal()" 
-                            class="btn-primary w-full py-3 rounded-xl font-semibold">
+                            class="btn-royal w-full py-3 rounded-xl font-semibold">
                         Close Profile
                     </button>
                 </div>
@@ -529,7 +655,8 @@
             where,
             getDocs,
             serverTimestamp,
-            increment
+            increment,
+            deleteDoc
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // Firebase Configuration
@@ -555,6 +682,7 @@
         const onlineControls = document.getElementById('online-controls');
         const boardGrid = document.getElementById('board-grid');
         const accountForm = document.getElementById('account-form');
+        const loginForm = document.getElementById('login-form');
         const welcomeContent = document.getElementById('welcome-content');
         const profileModal = document.getElementById('profile-modal');
         
@@ -580,7 +708,10 @@
             userProfile: null,
             unsubscribeGame: null,
             isGuest: true,
-            playerStats: { wins: 0, losses: 0, draws: 0 }
+            playerStats: { wins: 0, losses: 0, draws: 0 },
+            onlineGameEnded: false,
+            waitTimer: null,
+            gameCreationTime: null
         };
         
         // Initialize Game
@@ -588,7 +719,7 @@
             // Setup event listeners
             setupEventListeners();
             
-            // Initialize audio
+            // Initialize audio (autoplay with user interaction)
             initializeAudio();
             
             // Check authentication state
@@ -637,9 +768,12 @@
         function setupEventListeners() {
             // Welcome screen buttons
             document.getElementById('quick-play-btn').addEventListener('click', quickPlay);
-            document.getElementById('create-account-btn').addEventListener('click', showAccountForm);
+            document.getElementById('royal-login-btn').addEventListener('click', showLoginForm);
+            document.getElementById('create-account-text').addEventListener('click', showAccountForm);
             document.getElementById('back-to-welcome').addEventListener('click', showWelcomeContent);
+            document.getElementById('back-to-welcome-from-login').addEventListener('click', showWelcomeContent);
             document.getElementById('register-btn').addEventListener('click', registerAccount);
+            document.getElementById('login-btn').addEventListener('click', loginAccount);
             
             // Game controls
             document.getElementById('logout-btn').addEventListener('click', logout);
@@ -648,6 +782,13 @@
             document.getElementById('change-mode').addEventListener('click', backToModes);
             document.getElementById('audio-toggle').addEventListener('click', toggleAudio);
             document.getElementById('sound-toggle').addEventListener('click', toggleSounds);
+            
+            // Auto-play audio on first user interaction
+            document.addEventListener('click', () => {
+                if (gameState.audioEnabled && bgMusic.paused) {
+                    bgMusic.play().catch(e => console.log("Autoplay prevented"));
+                }
+            }, { once: true });
         }
         
         // Initialize Audio
@@ -658,10 +799,22 @@
             winSound.volume = 0.6;
             drawSound.volume = 0.6;
             
-            // Try to play background music
-            bgMusic.play().catch(e => {
-                console.log("Autoplay blocked. User interaction required.");
-            });
+            // Set audio to be on by default
+            gameState.audioEnabled = true;
+            gameState.soundsEnabled = true;
+            
+            // Update button states
+            document.getElementById('audio-toggle').innerHTML = '<span>🎵</span><span>Music: On</span>';
+            document.getElementById('sound-toggle').innerHTML = '<span>🔊</span><span>Sounds: On</span>';
+            
+            // Try to play background music with user interaction
+            document.addEventListener('click', () => {
+                bgMusic.play().then(() => {
+                    console.log("Music started");
+                }).catch(e => {
+                    console.log("Autoplay blocked. User interaction required.");
+                });
+            }, { once: true });
         }
         
         // User Management
@@ -672,7 +825,7 @@
                 
                 // Create guest profile
                 await setDoc(doc(db, 'users', user.uid), {
-                    displayName: 'Guest Player',
+                    displayName: 'Royal Guest',
                     username: `guest_${user.uid.slice(0, 8)}`,
                     isGuest: true,
                     createdAt: serverTimestamp(),
@@ -683,9 +836,12 @@
                 });
                 
                 gameState.userProfile = {
-                    displayName: 'Guest Player',
+                    displayName: 'Royal Guest',
                     username: `guest_${user.uid.slice(0, 8)}`,
-                    isGuest: true
+                    isGuest: true,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0
                 };
                 
                 gameState.isGuest = true;
@@ -705,17 +861,26 @@
         function showAccountForm() {
             welcomeContent.classList.add('hidden');
             accountForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        }
+        
+        function showLoginForm() {
+            welcomeContent.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            accountForm.classList.add('hidden');
         }
         
         function showWelcomeContent() {
             accountForm.classList.add('hidden');
+            loginForm.classList.add('hidden');
             welcomeContent.classList.remove('hidden');
         }
         
         async function registerAccount() {
             const displayName = document.getElementById('display-name').value.trim();
             const username = document.getElementById('username').value.trim().toLowerCase();
-            const confirmUsername = document.getElementById('confirm-username').value.trim().toLowerCase();
+            const passcode = document.getElementById('passcode').value;
+            const confirmPasscode = document.getElementById('confirm-passcode').value;
             const errorDiv = document.getElementById('auth-error');
             const authSpinner = document.getElementById('auth-spinner');
             
@@ -723,20 +888,26 @@
             authSpinner.classList.remove('hidden');
             
             // Validation
-            if (!displayName || !username || !confirmUsername) {
+            if (!displayName || !username || !passcode || !confirmPasscode) {
                 showError('Please fill in all fields');
                 authSpinner.classList.add('hidden');
                 return;
             }
             
-            if (username !== confirmUsername) {
-                showError('Usernames do not match');
+            if (passcode !== confirmPasscode) {
+                showError('Passcodes do not match');
                 authSpinner.classList.add('hidden');
                 return;
             }
             
             if (username.length < 3) {
                 showError('Username must be at least 3 characters');
+                authSpinner.classList.add('hidden');
+                return;
+            }
+            
+            if (passcode.length < 4) {
+                showError('Passcode must be at least 4 characters');
                 authSpinner.classList.add('hidden');
                 return;
             }
@@ -757,10 +928,11 @@
                 const userCredential = await signInAnonymously(auth);
                 const user = userCredential.user;
                 
-                // Create user profile
+                // Create user profile with passcode
                 await setDoc(doc(db, 'users', user.uid), {
                     displayName: displayName,
                     username: username,
+                    passcode: passcode,
                     isGuest: false,
                     createdAt: serverTimestamp(),
                     lastSeen: serverTimestamp(),
@@ -772,7 +944,10 @@
                 gameState.userProfile = {
                     displayName: displayName,
                     username: username,
-                    isGuest: false
+                    isGuest: false,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0
                 };
                 
                 gameState.isGuest = false;
@@ -790,12 +965,91 @@
             }
         }
         
+        async function loginAccount() {
+            const username = document.getElementById('login-username').value.trim().toLowerCase();
+            const passcode = document.getElementById('login-passcode').value;
+            const errorDiv = document.getElementById('login-error');
+            const loginSpinner = document.getElementById('login-spinner');
+            
+            errorDiv.classList.add('hidden');
+            loginSpinner.classList.remove('hidden');
+            
+            // Validation
+            if (!username || !passcode) {
+                showLoginError('Please fill in all fields');
+                loginSpinner.classList.add('hidden');
+                return;
+            }
+            
+            try {
+                // Find user by username
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('username', '==', username));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    showLoginError('Username not found');
+                    loginSpinner.classList.add('hidden');
+                    return;
+                }
+                
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                // Check passcode
+                if (userData.passcode !== passcode) {
+                    showLoginError('Incorrect passcode');
+                    loginSpinner.classList.add('hidden');
+                    return;
+                }
+                
+                // Sign in anonymously and link to existing account
+                const userCredential = await signInAnonymously(auth);
+                const user = userCredential.user;
+                
+                // Update last seen
+                await updateDoc(doc(db, 'users', userDoc.id), {
+                    lastSeen: serverTimestamp()
+                });
+                
+                gameState.userProfile = userData;
+                gameState.isGuest = false;
+                gameState.playerStats = {
+                    wins: userData.wins || 0,
+                    losses: userData.losses || 0,
+                    draws: userData.draws || 0
+                };
+                
+                document.getElementById('current-username').textContent = `@${username}`;
+                loginSpinner.classList.add('hidden');
+                
+                showGameView();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showLoginError('Login failed: ' + error.message);
+                loginSpinner.classList.add('hidden');
+            }
+        }
+        
         async function logout() {
             try {
                 if (gameState.unsubscribeGame) {
                     gameState.unsubscribeGame();
                     gameState.unsubscribeGame = null;
                 }
+                
+                // Clear any wait timer
+                if (gameState.waitTimer) {
+                    clearTimeout(gameState.waitTimer);
+                    gameState.waitTimer = null;
+                }
+                
+                // If online game, clean up
+                if (gameState.gameMode === 'online' && gameState.gameId) {
+                    await deleteDoc(doc(db, 'games', gameState.gameId));
+                }
+                
                 await signOut(auth);
                 gameState.currentUser = null;
                 gameState.userProfile = null;
@@ -811,6 +1065,7 @@
             gameView.classList.add('hidden');
             welcomeContent.classList.remove('hidden');
             accountForm.classList.add('hidden');
+            loginForm.classList.add('hidden');
             profileModal.classList.add('hidden');
         }
         
@@ -829,16 +1084,22 @@
             errorDiv.classList.remove('hidden');
         }
         
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+        
         function showMessage(message, type = 'info') {
-            const colors = {
-                info: 'text-blue-400',
-                success: 'text-green-400',
-                error: 'text-red-400',
-                warning: 'text-yellow-400'
-            };
-            
             const statusElement = document.getElementById('status-message');
             if (statusElement) {
+                const colors = {
+                    info: 'text-blue-400',
+                    success: 'text-yellow-300',
+                    error: 'text-red-400',
+                    warning: 'text-yellow-400'
+                };
+                
                 statusElement.innerHTML = `<span class="${colors[type]}">${message}</span>`;
             }
         }
@@ -849,6 +1110,8 @@
             
             document.getElementById('profile-name').textContent = gameState.userProfile.displayName;
             document.getElementById('profile-username').textContent = `@${gameState.userProfile.username}`;
+            
+            // Show correct stats (already calculated in playerStats)
             document.getElementById('profile-wins').textContent = gameState.playerStats.wins;
             document.getElementById('profile-losses').textContent = gameState.playerStats.losses;
             document.getElementById('profile-draws').textContent = gameState.playerStats.draws;
@@ -864,10 +1127,12 @@
         function setGameMode(mode) {
             gameState.gameMode = mode;
             gameState.gameId = null;
+            gameState.onlineGameEnded = false;
             
             modeSelection.classList.add('hidden');
             gameBoardContainer.classList.remove('hidden');
             document.getElementById('online-game-info').classList.add('hidden');
+            document.getElementById('local-controls').classList.remove('hidden');
             
             startNewGame();
         }
@@ -877,16 +1142,27 @@
             onlineControls.classList.remove('hidden');
             
             // Generate game ID
-            const gameId = 'TTT-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            const gameId = 'ROYAL-' + Math.random().toString(36).substr(2, 8).toUpperCase();
             document.getElementById('game-id-display').textContent = gameId;
             gameState.gameId = gameId;
         }
         
         function backToModes() {
+            // Clear any wait timer
+            if (gameState.waitTimer) {
+                clearTimeout(gameState.waitTimer);
+                gameState.waitTimer = null;
+            }
+            
             // Unsubscribe from game updates
             if (gameState.unsubscribeGame) {
                 gameState.unsubscribeGame();
                 gameState.unsubscribeGame = null;
+            }
+            
+            // Clean up online game if exists
+            if (gameState.gameMode === 'online' && gameState.gameId) {
+                deleteDoc(doc(db, 'games', gameState.gameId)).catch(() => {});
             }
             
             gameBoardContainer.classList.add('hidden');
@@ -894,6 +1170,7 @@
             modeSelection.classList.remove('hidden');
             gameState.gameMode = null;
             gameState.gameId = null;
+            gameState.onlineGameEnded = false;
         }
         
         // Online Game Management
@@ -903,7 +1180,7 @@
                 return;
             }
             
-            const gameId = gameState.gameId || 'TTT-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            const gameId = gameState.gameId || 'ROYAL-' + Math.random().toString(36).substr(2, 8).toUpperCase();
             
             try {
                 const playerName = gameState.userProfile?.displayName || 'Anonymous';
@@ -918,35 +1195,63 @@
                     playerO: null,
                     board: Array(9).fill(''),
                     currentPlayer: 'X',
-                    gameActive: true,
+                    gameActive: false, // Game is not active until opponent joins
                     status: 'waiting',
                     createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp()
+                    updatedAt: serverTimestamp(),
+                    gameEnded: false,
+                    gameCreationTime: Date.now()
                 };
                 
                 await setDoc(doc(db, 'games', gameId), gameData);
                 
                 gameState.gameMode = 'online';
                 gameState.mySymbol = 'X';
-                gameState.isPlayerTurn = true;
+                gameState.isPlayerTurn = false; // Not player's turn until opponent joins
                 gameState.gameId = gameId;
+                gameState.onlineGameEnded = false;
+                gameState.gameCreationTime = Date.now();
                 
                 onlineControls.classList.add('hidden');
                 gameBoardContainer.classList.remove('hidden');
                 document.getElementById('online-game-info').classList.remove('hidden');
+                document.getElementById('local-controls').classList.add('hidden');
                 
                 // Update player info
                 document.getElementById('player-you').textContent = playerName;
-                document.getElementById('player-opponent').textContent = 'Waiting...';
+                document.getElementById('player-opponent').textContent = 'Waiting for opponent...';
+                
+                // Clear any existing timer
+                if (gameState.waitTimer) {
+                    clearTimeout(gameState.waitTimer);
+                }
+                
+                // Set 3-minute wait timer
+                gameState.waitTimer = setTimeout(async () => {
+                    if (gameState.gameMode === 'online' && gameState.gameId === gameId) {
+                        const gameRef = doc(db, 'games', gameId);
+                        const gameSnap = await getDoc(gameRef);
+                        if (gameSnap.exists()) {
+                            const gameData = gameSnap.data();
+                            if (!gameData.playerO) {
+                                // No opponent joined in 3 minutes
+                                showMessage('No opponent joined in 3 minutes. Returning to mode selection.', 'error');
+                                setTimeout(() => {
+                                    backToModes();
+                                }, 3000);
+                            }
+                        }
+                    }
+                }, 180000); // 3 minutes = 180000 milliseconds
                 
                 startNewGame();
                 listenToGameUpdates(gameId);
                 
-                showMessage(`Game created! Share ID: <span class="font-mono">${gameId}</span>`, 'success');
+                showMessage(`Royal Battle created! Share Seal: <span class="font-mono">${gameId}</span><br>Waiting for opponent (3 minutes)`, 'success');
                 
             } catch (error) {
                 console.error('Error creating game:', error);
-                showMessage('Failed to create game: ' + error.message, 'error');
+                showMessage('Failed to create battle: ' + error.message, 'error');
             }
         }
         
@@ -954,7 +1259,7 @@
             const gameId = document.getElementById('join-game-input').value.trim().toUpperCase();
             
             if (!gameId) {
-                showMessage('Please enter a game ID', 'error');
+                showMessage('Please enter a Royal Seal', 'error');
                 return;
             }
             
@@ -967,30 +1272,40 @@
                 const gameDoc = await getDoc(doc(db, 'games', gameId));
                 
                 if (!gameDoc.exists()) {
-                    showMessage('Game not found', 'error');
+                    showMessage('Battle not found', 'error');
                     return;
                 }
                 
                 const gameData = gameDoc.data();
                 
+                // Check if game is older than 3 minutes
+                const gameAge = Date.now() - (gameData.gameCreationTime || Date.now());
+                if (gameAge > 180000 && !gameData.playerO) {
+                    showMessage('This battle has expired (3 minutes)', 'error');
+                    await deleteDoc(doc(db, 'games', gameId));
+                    return;
+                }
+                
                 // Check if game is already full
                 if (gameData.playerO) {
-                    showMessage('Game is full', 'error');
+                    showMessage('Battle is full', 'error');
                     return;
                 }
                 
                 // Check if user is already in the game
                 if (gameData.playerX.uid === gameState.currentUser.uid) {
-                    showMessage('You are already in this game as Player X', 'info');
+                    showMessage('You are already in this battle as Player X', 'info');
                     // Rejoin as player X
                     gameState.gameMode = 'online';
                     gameState.mySymbol = 'X';
                     gameState.isPlayerTurn = gameData.currentPlayer === 'X';
                     gameState.gameId = gameId;
+                    gameState.onlineGameEnded = false;
                     
                     onlineControls.classList.add('hidden');
                     gameBoardContainer.classList.remove('hidden');
                     document.getElementById('online-game-info').classList.remove('hidden');
+                    document.getElementById('local-controls').classList.add('hidden');
                     
                     document.getElementById('player-you').textContent = gameData.playerX.name;
                     document.getElementById('player-opponent').textContent = gameData.playerO?.name || 'Waiting...';
@@ -1011,6 +1326,7 @@
                         username: playerUsername
                     },
                     status: 'active',
+                    gameActive: true,
                     updatedAt: serverTimestamp()
                 });
                 
@@ -1018,10 +1334,18 @@
                 gameState.mySymbol = 'O';
                 gameState.isPlayerTurn = gameData.currentPlayer === 'O';
                 gameState.gameId = gameId;
+                gameState.onlineGameEnded = false;
+                
+                // Clear the wait timer since opponent joined
+                if (gameState.waitTimer) {
+                    clearTimeout(gameState.waitTimer);
+                    gameState.waitTimer = null;
+                }
                 
                 onlineControls.classList.add('hidden');
                 gameBoardContainer.classList.remove('hidden');
                 document.getElementById('online-game-info').classList.remove('hidden');
+                document.getElementById('local-controls').classList.add('hidden');
                 
                 document.getElementById('player-you').textContent = playerName;
                 document.getElementById('player-opponent').textContent = gameData.playerX.name;
@@ -1029,11 +1353,11 @@
                 startNewGame();
                 listenToGameUpdates(gameId);
                 
-                showMessage(`Joined game against ${gameData.playerX.name}!`, 'success');
+                showMessage(`Joined battle against ${gameData.playerX.name}!`, 'success');
                 
             } catch (error) {
                 console.error('Error joining game:', error);
-                showMessage('Failed to join game: ' + error.message, 'error');
+                showMessage('Failed to join battle: ' + error.message, 'error');
             }
         }
         
@@ -1045,22 +1369,48 @@
                 gameState.unsubscribeGame();
             }
             
-            gameState.unsubscribeGame = onSnapshot(gameRef, (snapshot) => {
+            gameState.unsubscribeGame = onSnapshot(gameRef, async (snapshot) => {
                 if (!snapshot.exists()) {
-                    showMessage('Game ended by host', 'error');
+                    // Game was deleted (player left)
+                    showMessage('Battle abandoned by opponent', 'error');
                     setTimeout(() => {
                         backToModes();
-                    }, 2000);
+                    }, 3000);
                     return;
                 }
                 
                 const gameData = snapshot.data();
+                
+                // Check if opponent left after game started
+                if (gameState.gameActive) {
+                    if (gameState.mySymbol === 'X' && !gameData.playerO) {
+                        showMessage('Opponent left the battle', 'error');
+                        setTimeout(() => {
+                            backToModes();
+                        }, 3000);
+                        return;
+                    }
+                    
+                    if (gameState.mySymbol === 'O' && !gameData.playerX) {
+                        showMessage('Opponent left the battle', 'error');
+                        setTimeout(() => {
+                            backToModes();
+                        }, 3000);
+                        return;
+                    }
+                }
                 
                 // Update opponent info
                 if (gameData.playerO && gameData.playerX.uid === gameState.currentUser.uid) {
                     document.getElementById('player-opponent').textContent = gameData.playerO.name;
                 } else if (gameData.playerX.uid !== gameState.currentUser.uid) {
                     document.getElementById('player-opponent').textContent = gameData.playerX.name;
+                }
+                
+                // If opponent joined, activate the game
+                if (gameData.playerO && !gameState.gameActive) {
+                    gameState.gameActive = true;
+                    gameState.isPlayerTurn = (gameState.mySymbol === gameData.currentPlayer);
                 }
                 
                 gameState.board = gameData.board || Array(9).fill('');
@@ -1075,9 +1425,38 @@
                 
                 // Check for win
                 const result = checkGameResult();
-                if (result.winner || result.draw) {
+                if ((result.winner || result.draw) && !gameState.onlineGameEnded) {
                     gameState.gameActive = false;
-                    handleGameEnd(result.winner, result.winningCells, result.draw);
+                    gameState.onlineGameEnded = true;
+                    
+                    const winType = result.winner === gameState.mySymbol ? 'win' : 
+                                   result.draw ? 'draw' : 'loss';
+                    
+                    handleGameEnd(result.winner, result.winningCells, result.draw, winType);
+                    
+                    // Auto-start new game after delay for online mode
+                    setTimeout(async () => {
+                        if (gameState.gameMode === 'online' && gameState.gameId) {
+                            // Reset game data for new round
+                            await updateDoc(doc(db, 'games', gameState.gameId), {
+                                board: Array(9).fill(''),
+                                currentPlayer: 'X',
+                                gameActive: true,
+                                gameEnded: false,
+                                updatedAt: serverTimestamp()
+                            });
+                            
+                            gameState.gameActive = true;
+                            gameState.onlineGameEnded = false;
+                            gameState.currentPlayer = 'X';
+                            gameState.isPlayerTurn = (gameState.mySymbol === 'X');
+                            gameState.board = Array(9).fill('');
+                            
+                            updateBoard();
+                            updateStatus();
+                            showMessage("New round begins! Good luck!", 'success');
+                        }
+                    }, 3000);
                 }
             }, (error) => {
                 console.error('Game update error:', error);
@@ -1089,7 +1468,7 @@
         function startNewGame() {
             gameState.board = Array(9).fill('');
             gameState.currentPlayer = 'X';
-            gameState.gameActive = true;
+            gameState.gameActive = gameState.gameMode !== 'online'; // Online games are not active until opponent joins
             
             updateBoard();
             updateStatus();
@@ -1138,9 +1517,22 @@
             if (gameState.gameMode === 'online') {
                 updateOnlineGame(result);
             } else {
+                let winType = 'info';
+                if (result.winner) {
+                    // For AI mode: X is player, O is AI
+                    if (gameState.gameMode === 'ai') {
+                        winType = result.winner === 'X' ? 'win' : 'loss';
+                    } else {
+                        // For local mode: just show winner
+                        winType = 'info';
+                    }
+                } else if (result.draw) {
+                    winType = 'draw';
+                }
+                
                 if (result.winner || result.draw) {
                     gameState.gameActive = false;
-                    handleGameEnd(result.winner, result.winningCells, result.draw);
+                    handleGameEnd(result.winner, result.winningCells, result.draw, winType);
                 } else {
                     gameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
                     
@@ -1249,9 +1641,12 @@
                 }
                 
                 const result = checkGameResult();
+                const winType = result.winner ? (result.winner === 'X' ? 'win' : 'loss') : 
+                              result.draw ? 'draw' : 'info';
+                
                 if (result.winner || result.draw) {
                     gameState.gameActive = false;
-                    handleGameEnd(result.winner, result.winningCells, result.draw);
+                    handleGameEnd(result.winner, result.winningCells, result.draw, winType);
                 } else {
                     gameState.currentPlayer = 'X';
                 }
@@ -1294,7 +1689,7 @@
             };
         }
         
-        async function handleGameEnd(winner, winningCells, isDraw = false) {
+        async function handleGameEnd(winner, winningCells, isDraw = false, winType = 'info') {
             // Highlight winning cells
             if (winningCells) {
                 winningCells.forEach(index => {
@@ -1320,17 +1715,38 @@
             // Update scores
             if (winner) {
                 gameState.scores[winner]++;
-                showMessage(`${winner} wins! 🎉`, 'success');
+                
+                // Show appropriate message for local/AI modes
+                if (gameState.gameMode === 'local') {
+                    showMessage(`${winner} wins the royal duel! 👑`, 'success');
+                } else if (gameState.gameMode === 'ai') {
+                    if (winType === 'win') {
+                        showMessage('You outsmarted Mr. Mirror! You win! 👑', 'success');
+                    } else if (winType === 'loss') {
+                        showMessage('Mr. Mirror triumphs! You lose! 🤖', 'error');
+                    } else {
+                        showMessage(`${winner} claims victory! 👑`, 'success');
+                    }
+                } else {
+                    showMessage(`${winner} claims victory! 👑`, 'success');
+                }
                 
                 // Update stats for registered users
-                if (!gameState.isGuest && gameState.currentUser) {
-                    await updateUserStats(winner === gameState.mySymbol ? 'win' : 'loss');
+                if (gameState.currentUser) {
+                    await updateUserStats(winType);
                 }
             } else if (isDraw) {
                 gameState.scores.draws++;
-                showMessage("It's a draw! 🤝", 'info');
                 
-                if (!gameState.isGuest && gameState.currentUser) {
+                if (gameState.gameMode === 'local') {
+                    showMessage("A royal stalemate! ⚔️ Draw!", 'info');
+                } else if (gameState.gameMode === 'ai') {
+                    showMessage("A draw with Mr. Mirror! ⚔️", 'info');
+                } else {
+                    showMessage("A royal stalemate! ⚔️", 'info');
+                }
+                
+                if (gameState.currentUser) {
                     await updateUserStats('draw');
                 }
             }
@@ -1346,7 +1762,7 @@
         }
         
         async function updateUserStats(result) {
-            if (!gameState.currentUser || gameState.isGuest) return;
+            if (!gameState.currentUser) return;
             
             try {
                 const userRef = doc(db, 'users', gameState.currentUser.uid);
@@ -1374,39 +1790,45 @@
         function updateStatus() {
             const statusElement = document.getElementById('status-message');
             const turnElement = document.getElementById('turn-indicator');
-            const dot = turnElement?.querySelector('.status-dot');
             
             if (!gameState.gameActive) {
-                statusElement.textContent = "Game Over";
+                statusElement.textContent = "Battle Concluded";
                 if (turnElement) {
-                    turnElement.innerHTML = '<span class="status-dot offline mr-2"></span><span>Game finished</span>';
+                    turnElement.innerHTML = '<span class="status-dot offline mr-2"></span><span>Royal battle finished</span>';
                 }
                 return;
             }
             
             if (gameState.gameMode === 'online') {
-                const playerText = gameState.mySymbol === 'X' ? ' (You)' : ' (You)';
-                const opponentText = gameState.isPlayerTurn ? 'Your turn' : 'Opponent\'s turn';
-                const dotClass = gameState.isPlayerTurn ? 'online' : 'waiting';
-                
-                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400'}">${gameState.currentPlayer}${playerText}</span>`;
-                if (turnElement) {
-                    turnElement.innerHTML = `<span class="status-dot ${dotClass} mr-2"></span><span>${opponentText}</span>`;
+                if (!gameState.gameActive) {
+                    statusElement.innerHTML = '<span class="text-yellow-300">Waiting for opponent to join...</span>';
+                    if (turnElement) {
+                        turnElement.innerHTML = '<span class="status-dot waiting mr-2"></span><span>Opponent has 3 minutes to join</span>';
+                    }
+                } else {
+                    const playerText = gameState.mySymbol === 'X' ? ' (Your Majesty)' : ' (Your Grace)';
+                    const opponentText = gameState.isPlayerTurn ? 'Your turn to strike' : 'Opponent\'s turn';
+                    const dotClass = gameState.isPlayerTurn ? 'online' : 'waiting';
+                    
+                    statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'royal-title' : 'silver-gradient'}">${gameState.currentPlayer}${playerText}</span>`;
+                    if (turnElement) {
+                        turnElement.innerHTML = `<span class="status-dot ${dotClass} mr-2"></span><span>${opponentText}</span>`;
+                    }
                 }
                 
             } else if (gameState.gameMode === 'ai') {
-                const playerText = gameState.currentPlayer === 'X' ? 'Your turn' : 'AI thinking...';
+                const playerText = gameState.currentPlayer === 'X' ? 'Your strategic move' : 'Mr. Mirror contemplates...';
                 const dotClass = gameState.currentPlayer === 'X' ? 'online' : 'waiting';
                 
-                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400'}">${gameState.currentPlayer}</span>`;
+                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'royal-title' : 'silver-gradient'}">${gameState.currentPlayer}</span>`;
                 if (turnElement) {
                     turnElement.innerHTML = `<span class="status-dot ${dotClass} mr-2"></span><span>${playerText}</span>`;
                 }
                 
             } else {
-                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'text-red-400' : 'text-blue-400'}">${gameState.currentPlayer}</span>'s turn`;
+                statusElement.innerHTML = `<span class="${gameState.currentPlayer === 'X' ? 'royal-title' : 'silver-gradient'}">${gameState.currentPlayer}</span>'s royal move`;
                 if (turnElement) {
-                    turnElement.innerHTML = '<span class="status-dot online mr-2"></span><span>Local game</span>';
+                    turnElement.innerHTML = '<span class="status-dot online mr-2"></span><span>Royal duel in progress</span>';
                 }
             }
         }
@@ -1429,13 +1851,13 @@
             if (gameState.audioEnabled) {
                 bgMusic.play().catch(e => console.log("Audio play failed"));
                 button.innerHTML = '<span>🎵</span><span>Music: On</span>';
-                button.classList.remove('bg-gray-800');
-                button.classList.add('bg-indigo-600/30');
+                button.classList.remove('bg-gray-800/50');
+                button.classList.add('bg-yellow-600/30');
             } else {
                 bgMusic.pause();
                 button.innerHTML = '<span>🎵</span><span>Music: Off</span>';
-                button.classList.remove('bg-indigo-600/30');
-                button.classList.add('bg-gray-800');
+                button.classList.remove('bg-yellow-600/30');
+                button.classList.add('bg-gray-800/50');
             }
         }
         
@@ -1445,12 +1867,12 @@
             
             if (gameState.soundsEnabled) {
                 button.innerHTML = '<span>🔊</span><span>Sounds: On</span>';
-                button.classList.remove('bg-gray-800');
-                button.classList.add('bg-indigo-600/30');
+                button.classList.remove('bg-gray-800/50');
+                button.classList.add('bg-yellow-600/30');
             } else {
                 button.innerHTML = '<span>🔊</span><span>Sounds: Off</span>';
-                button.classList.remove('bg-indigo-600/30');
-                button.classList.add('bg-gray-800');
+                button.classList.remove('bg-yellow-600/30');
+                button.classList.add('bg-gray-800/50');
             }
         }
         
@@ -1458,7 +1880,7 @@
         function copyGameId() {
             const gameId = document.getElementById('game-id-display').textContent;
             navigator.clipboard.writeText(gameId).then(() => {
-                showMessage('Game ID copied!', 'success');
+                showMessage('Royal Seal copied!', 'success');
             }).catch(() => {
                 // Fallback for older browsers
                 const textArea = document.createElement('textarea');
@@ -1467,7 +1889,7 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showMessage('Game ID copied!', 'success');
+                showMessage('Royal Seal copied!', 'success');
             });
         }
         
